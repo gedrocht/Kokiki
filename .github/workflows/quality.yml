@@ -1,0 +1,69 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, policy, and static analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install actionlint-py markdownlint-cli2 yamllint
+
+      - name: Run actionlint
+        run: actionlint
+
+      - name: Run Markdown lint
+        run: markdownlint-cli2 "**/*.md" "#node_modules"
+
+      - name: Run YAML lint
+        run: yamllint .
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Analyze PowerShell
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Recurse -File -Include *.ps1,*.psm1,*.psd1
+          if ($scripts) {
+            Invoke-ScriptAnalyzer -Path $scripts.FullName -Recurse -Severity Error,Warning
+          } else {
+            Write-Host "No PowerShell files found."
+          }
+
+      - name: Validate repository policy
+        shell: pwsh
+        run: ./scripts/validate-repo.ps1
+
+      - name: Run repository tests
+        shell: pwsh
+        run: Invoke-Pester -Path ./tests -CI
