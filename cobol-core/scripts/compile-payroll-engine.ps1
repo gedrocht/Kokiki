@@ -28,4 +28,4 @@ if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $compiledExecutableFile
   throw "GNU COBOL compilation failed."
 }
 
-Write-Host "Compiled COBOL payroll engine to $compiledExecutableFilePath"
+Write-Output "Compiled COBOL payroll engine to $compiledExecutableFilePath"

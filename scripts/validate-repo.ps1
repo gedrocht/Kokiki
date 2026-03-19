@@ -118,4 +118,4 @@ if ($readmeContent -notmatch "COBOL" -or $readmeContent -notmatch "Spring Boot" 
   throw "README.md must describe the COBOL engine, Spring Boot client, and Wiki.js documentation layer."
 }
 
-Write-Host "Repository policy validation passed."
+Write-Output "Repository policy validation passed."
