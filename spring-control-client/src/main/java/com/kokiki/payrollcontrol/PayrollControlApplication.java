@@ -11,14 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * this class as the "front door" of the application.</p>
  */
 @SpringBootApplication
-public final class PayrollControlApplication {
-
-  /**
-   * Private constructor prevents accidental instantiation of the application
-   * bootstrap class.
-   */
-  private PayrollControlApplication() {
-  }
+public class PayrollControlApplication {
 
   /**
    * Starts the Spring Boot application.

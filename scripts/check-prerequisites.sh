@@ -18,11 +18,29 @@ check_tool() {
   fi
 }
 
+get_java_major_version() {
+  local java_version_line
+
+  java_version_line="$(java -version 2>&1 | head -n 1)"
+  if [[ "${java_version_line}" =~ \"([0-9]+)(\.[0-9]+)? ]]; then
+    printf '%s' "${BASH_REMATCH[1]}"
+    return 0
+  fi
+
+  return 1
+}
+
 printf '\nKokiki prerequisite check\n'
 printf '=========================\n\n'
 
 check_tool "Git" "git" "https://git-scm.com/downloads"
-check_tool "Java 21 or newer" "java" "https://adoptium.net/"
+check_tool "Java 21" "java" "https://adoptium.net/"
+if command -v java >/dev/null 2>&1; then
+  java_major_version="$(get_java_major_version || true)"
+  if [[ -n "${java_major_version}" && "${java_major_version}" != "21" ]]; then
+    printf '          Note: Java %s is installed. The full local build and test path currently requires Java 21.\n' "${java_major_version}"
+  fi
+fi
 check_tool "Apache Maven" "mvn" "https://maven.apache.org/download.cgi"
 check_tool \
   "GNU COBOL (optional but recommended for the real COBOL integration path)" \

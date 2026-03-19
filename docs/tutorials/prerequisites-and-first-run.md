@@ -7,8 +7,9 @@ to a running application.
 
 - Git:
   [https://git-scm.com/downloads](https://git-scm.com/downloads)
-- Java 21 or newer:
+- Java 21:
   [https://adoptium.net/](https://adoptium.net/)
+  Use Java 21 for the full local build and test path.
 - Apache Maven:
   [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
 - GNU COBOL:
