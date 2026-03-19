@@ -27,6 +27,20 @@ while operating it through a modern Java Spring Boot control client.
 
 ## Quick start
 
+### Build the project from the top-level scripts folder
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-project.ps1
+```
+
+On Bash:
+
+```bash
+./scripts/build-project.sh
+```
+
 ### Run the demonstration mode
 
 ```bash
@@ -91,4 +105,10 @@ If Java and Maven are installed:
 
 ```bash
 mvn clean verify
+```
+
+If you want the build script to handle that for you:
+
+```bash
+./scripts/build-project.sh
 ```

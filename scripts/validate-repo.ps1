@@ -27,6 +27,8 @@ $requiredFiles = @(
   "README.md",
   "SECURITY.md",
   "cobol-core/src/main/cobol/payroll_calculation_engine.cbl",
+  "scripts/build-project.ps1",
+  "scripts/build-project.sh",
   "spring-control-client/pom.xml",
   "spring-control-client/src/main/resources/fictional-company-employee-directory.csv",
   "wiki/docker-compose.yml",
