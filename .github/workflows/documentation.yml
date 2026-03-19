@@ -24,10 +24,10 @@ jobs:
           egress-policy: audit
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -49,7 +49,9 @@ jobs:
         run: mvn -B -ntp -pl spring-control-client -am javadoc:javadoc
 
       - name: Generate Doxygen site
-        run: doxygen Doxyfile
+        run: |
+          mkdir -p build/doxygen
+          doxygen Doxyfile
 
       - name: Build MkDocs site
         run: python -m mkdocs build

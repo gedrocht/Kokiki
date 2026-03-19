@@ -27,5 +27,4 @@ if (Test-Path -LiteralPath $gnuCobolEnvironmentSetupScriptPath) {
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $compiledExecutableFilePath)) {
   throw "GNU COBOL compilation failed."
 }
-
 Write-Output "Compiled COBOL payroll engine to $compiledExecutableFilePath"

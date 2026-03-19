@@ -33,36 +33,36 @@ public final class DemonstrationPayrollEngineClient implements PayrollEngineClie
         payrollExecutionRequest.employeeIdentifier());
 
     final BigDecimal grossRegularPayAmount =
-        payrollExecutionRequest.hourlyWageAmount().multiply(payrollExecutionRequest.regularHoursWorked());
+        scaleCurrency(payrollExecutionRequest.hourlyWageAmount().multiply(payrollExecutionRequest.regularHoursWorked()));
     final BigDecimal grossOvertimePayAmount =
-        payrollExecutionRequest.hourlyWageAmount()
+        scaleCurrency(payrollExecutionRequest.hourlyWageAmount()
             .multiply(payrollExecutionRequest.overtimeHoursWorked())
-            .multiply(OVERTIME_PAY_MULTIPLIER);
+            .multiply(OVERTIME_PAY_MULTIPLIER));
     final BigDecimal grossPayAmount =
-        grossRegularPayAmount.add(grossOvertimePayAmount).add(payrollExecutionRequest.performanceBonusAmount());
+        scaleCurrency(grossRegularPayAmount.add(grossOvertimePayAmount).add(payrollExecutionRequest.performanceBonusAmount()));
     final BigDecimal taxWithholdingAmount =
-        grossPayAmount.multiply(payrollExecutionRequest.standardTaxRatePercentage());
-    final BigDecimal retirementContributionAmount = grossPayAmount.multiply(RETIREMENT_CONTRIBUTION_RATE);
+        scaleCurrency(grossPayAmount.multiply(payrollExecutionRequest.standardTaxRatePercentage()));
+    final BigDecimal retirementContributionAmount = scaleCurrency(grossPayAmount.multiply(RETIREMENT_CONTRIBUTION_RATE));
     final BigDecimal paidLeaveAccruedHours =
-        payrollExecutionRequest.regularHoursWorked()
+        scaleHours(payrollExecutionRequest.regularHoursWorked()
             .add(payrollExecutionRequest.overtimeHoursWorked())
-            .multiply(PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR);
+            .multiply(PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR));
     final BigDecimal netPayAmount =
-        grossPayAmount.subtract(taxWithholdingAmount)
+        scaleCurrency(grossPayAmount.subtract(taxWithholdingAmount)
             .subtract(retirementContributionAmount)
-            .subtract(payrollExecutionRequest.benefitDeductionAmount());
+            .subtract(payrollExecutionRequest.benefitDeductionAmount()));
 
     return new CobolPayrollExecutionResponse(
         payrollExecutionRequest.employeeIdentifier(),
         payrollExecutionRequest.employeeFullName(),
-        scaleCurrency(grossRegularPayAmount),
-        scaleCurrency(grossOvertimePayAmount),
-        scaleCurrency(grossPayAmount),
-        scaleCurrency(taxWithholdingAmount),
-        scaleCurrency(retirementContributionAmount),
+        grossRegularPayAmount,
+        grossOvertimePayAmount,
+        grossPayAmount,
+        taxWithholdingAmount,
+        retirementContributionAmount,
         scaleCurrency(payrollExecutionRequest.benefitDeductionAmount()),
-        scaleHours(paidLeaveAccruedHours),
-        scaleCurrency(netPayAmount));
+        paidLeaveAccruedHours,
+        netPayAmount);
   }
 
   @Override
