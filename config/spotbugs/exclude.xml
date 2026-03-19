@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match>
+    <Class name="~.*Application"/>
+    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+  </Match>
+  <Match>
+    <Class name="com.kokiki.payrollcontrol.service.ProcessBackedCobolPayrollEngineClient"/>
+    <Bug pattern="COMMAND_INJECTION,PATH_TRAVERSAL_IN"/>
+  </Match>
+</FindBugsFilter>

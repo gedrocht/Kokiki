@@ -1,0 +1,31 @@
+employeeIdentifier,employeeFullName,departmentName,roleTitle,hourlyWageAmount,overtimeEligible,standardTaxRatePercentage,benefitDeductionAmount
+EMP-1001,Adriana Bennett,Payroll,Payroll Manager,42.50,true,0.24,185.00
+EMP-1002,Marcus Holloway,Payroll,Payroll Specialist,31.25,true,0.22,145.00
+EMP-1003,Selena Porter,Finance,Finance Director,48.75,false,0.27,210.00
+EMP-1004,Elias Garner,Finance,Accounts Analyst,29.40,true,0.21,150.00
+EMP-1005,Talia Webster,Human Resources,People Operations Manager,39.15,false,0.24,190.00
+EMP-1006,Nolan Reeves,Human Resources,Recruiting Coordinator,26.10,true,0.20,135.00
+EMP-1007,Naomi Fischer,Design,Senior Interior Designer,44.20,false,0.25,205.00
+EMP-1008,Camila Owens,Design,Interior Designer,33.80,true,0.22,165.00
+EMP-1009,Julian Drake,Design,Junior Interior Designer,24.50,true,0.18,120.00
+EMP-1010,Harper Wells,Sales,Sales Director,46.00,false,0.26,220.00
+EMP-1011,Theo Mercer,Sales,Account Executive,34.75,true,0.23,175.00
+EMP-1012,Amaya Brooks,Sales,Business Development Representative,25.60,true,0.19,130.00
+EMP-1013,Delilah Rhodes,Project Management,Project Management Director,47.10,false,0.26,215.00
+EMP-1014,Griffin Sanders,Project Management,Project Manager,37.90,true,0.24,180.00
+EMP-1015,Mila Cunningham,Project Management,Project Coordinator,27.45,true,0.20,138.00
+EMP-1016,Jonah Ellis,Operations,Operations Director,45.80,false,0.26,210.00
+EMP-1017,Savannah Price,Operations,Office Operations Specialist,24.85,true,0.18,125.00
+EMP-1018,Landon Pierce,Warehouse,Warehouse Supervisor,30.95,true,0.22,155.00
+EMP-1019,Evelyn Ford,Warehouse,Inventory Specialist,22.40,true,0.17,110.00
+EMP-1020,Micah Sutton,Warehouse,Shipping Coordinator,23.15,true,0.18,115.00
+EMP-1021,Leah Whitaker,Installation,Installation Manager,36.50,true,0.23,170.00
+EMP-1022,Brody Lawson,Installation,Lead Installer,29.85,true,0.21,150.00
+EMP-1023,Aubrey Ramsey,Installation,Installer,24.20,true,0.18,118.00
+EMP-1024,Isla Carpenter,Customer Success,Customer Success Manager,35.25,true,0.23,168.00
+EMP-1025,Gavin Cooper,Customer Success,Client Support Specialist,24.95,true,0.18,122.00
+EMP-1026,Claire Harrison,Marketing,Marketing Manager,38.40,false,0.24,182.00
+EMP-1027,Wesley Barrett,Marketing,Content Specialist,27.30,true,0.20,136.00
+EMP-1028,Peyton Jenkins,Leadership,Chief Executive Officer,67.50,false,0.32,250.00
+EMP-1029,Roman Kelley,Leadership,Chief Operating Officer,61.25,false,0.30,240.00
+EMP-1030,Lucy Townsend,Information Technology,Systems Administrator,41.60,true,0.24,190.00
