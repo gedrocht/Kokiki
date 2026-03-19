@@ -25,9 +25,31 @@ while operating it through a modern Java Spring Boot control client.
 - `config/`: Checkstyle, PMD, and SpotBugs configuration
 - `.github/workflows/`: CI, security, docs, and scorecard automation
 
-## Quick start
+## Start here
 
-### Build the project from the top-level scripts folder
+If you are completely new to the project, use these scripts in this exact
+order:
+
+1. Check what you need to install.
+2. Build the project.
+3. Run the application.
+4. Run the tests.
+
+### Step 1: Check prerequisites
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/check-prerequisites.ps1
+```
+
+On Bash:
+
+```bash
+bash scripts/check-prerequisites.sh
+```
+
+### Step 2: Build the project
 
 On Windows PowerShell:
 
@@ -38,10 +60,40 @@ powershell -ExecutionPolicy Bypass -File scripts/build-project.ps1
 On Bash:
 
 ```bash
-./scripts/build-project.sh
+bash scripts/build-project.sh
 ```
 
-### Run the demonstration mode
+### Step 3: Run the application in demonstration mode
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run-application.ps1
+```
+
+On Bash:
+
+```bash
+bash scripts/run-application.sh
+```
+
+### Step 4: Run the tests
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/test-project.ps1
+```
+
+On Bash:
+
+```bash
+bash scripts/test-project.sh
+```
+
+## Additional manual commands
+
+### Run the demonstration mode directly with Maven
 
 ```bash
 mvn -pl spring-control-client spring-boot:run
@@ -50,9 +102,7 @@ mvn -pl spring-control-client spring-boot:run
 ### Run with the real COBOL executable
 
 ```bash
-./cobol-core/scripts/compile-payroll-engine.sh
-mvn -pl spring-control-client spring-boot:run \
-  -Dspring-boot.run.arguments=--company-payroll.execution-mode=process,--company-payroll.cobol-executable-path=../cobol-core/build/payroll-calculation-engine
+bash scripts/run-application.sh --use-cobol-process
 ```
 
 ### Example payroll request
@@ -101,14 +151,8 @@ Graph** setting to be enabled in GitHub.
 powershell -ExecutionPolicy Bypass -File scripts/validate-repo.ps1
 ```
 
-If Java and Maven are installed:
+The beginner-friendly full test entrypoint is:
 
 ```bash
-mvn clean verify
-```
-
-If you want the build script to handle that for you:
-
-```bash
-./scripts/build-project.sh
+bash scripts/test-project.sh
 ```

@@ -25,10 +25,17 @@ Describe "Repository baseline" {
       "README.md",
       "SECURITY.md",
       "cobol-core/src/main/cobol/payroll_calculation_engine.cbl",
+      "docs/tutorials/prerequisites-and-first-run.md",
+      "scripts/check-prerequisites.ps1",
+      "scripts/check-prerequisites.sh",
       "scripts/build-project.ps1",
       "scripts/build-project.sh",
+      "scripts/run-application.ps1",
+      "scripts/run-application.sh",
       "spring-control-client/pom.xml",
       "spring-control-client/src/main/resources/fictional-company-employee-directory.csv",
+      "scripts/test-project.ps1",
+      "scripts/test-project.sh",
       "wiki/docker-compose.yml",
       "mkdocs.yml"
     ) | ForEach-Object {

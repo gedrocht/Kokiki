@@ -1,0 +1,25 @@
+name: Bug report
+description: Report an application, documentation, or workflow defect.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe what happened and what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include commands, requests, or screenshots if helpful.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk
+      description: Explain whether payroll correctness, security, or documentation accuracy is affected.
