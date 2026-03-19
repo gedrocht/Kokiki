@@ -27,16 +27,16 @@ try {
       throw "GNU COBOL is required for -UseCobolProcess. Install GNU COBOL or run without that switch."
     }
 
-    Write-Host "Compiling the COBOL payroll engine."
+    Write-Output "Compiling the COBOL payroll engine."
     & (Join-Path $repositoryRootDirectory "cobol-core/scripts/compile-payroll-engine.ps1")
 
     $compiledCobolExecutablePath = Join-Path $repositoryRootDirectory "cobol-core/build/payroll-calculation-engine.exe"
 
-    Write-Host "Starting Spring Boot with the real COBOL process integration."
+    Write-Output "Starting Spring Boot with the real COBOL process integration."
     & mvn -pl spring-control-client spring-boot:run `
       "-Dspring-boot.run.arguments=--company-payroll.execution-mode=process,--company-payroll.cobol-executable-path=$compiledCobolExecutablePath"
   } else {
-    Write-Host "Starting Spring Boot in demonstration mode."
+    Write-Output "Starting Spring Boot in demonstration mode."
     & mvn -pl spring-control-client spring-boot:run
   }
 } finally {

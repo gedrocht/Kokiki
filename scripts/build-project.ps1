@@ -20,7 +20,7 @@ try {
   $mavenArguments = @("-B", "-ntp", "clean", "verify")
 
   if ($cobolCompilerCommand) {
-    Write-Host "GNU COBOL detected. Compiling the COBOL payroll engine first."
+    Write-Output "GNU COBOL detected. Compiling the COBOL payroll engine first."
     & (Join-Path $repositoryRootDirectory "cobol-core/scripts/compile-payroll-engine.ps1")
 
     $compiledCobolExecutablePath = Join-Path $repositoryRootDirectory "cobol-core/build/payroll-calculation-engine.exe"
@@ -29,7 +29,7 @@ try {
     Write-Warning "GNU COBOL was not found. The Java build will continue in demonstration mode without the real COBOL integration test."
   }
 
-  Write-Host "Running Maven verification."
+  Write-Output "Running Maven verification."
   & mvn @mavenArguments
 } finally {
   Pop-Location

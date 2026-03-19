@@ -14,4 +14,4 @@ $compiledExecutableFilePath = Join-Path $buildOutputDirectory "payroll-calculati
 New-Item -ItemType Directory -Path $buildOutputDirectory -Force | Out-Null
 & cobc -x -free -o $compiledExecutableFilePath $sourceProgramFilePath
 
-Write-Host "Compiled COBOL payroll engine to $compiledExecutableFilePath"
+Write-Output "Compiled COBOL payroll engine to $compiledExecutableFilePath"

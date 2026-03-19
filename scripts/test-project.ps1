@@ -10,8 +10,8 @@ Set-StrictMode -Version Latest
 # real COBOL integration test can participate.
 $repositoryRootDirectory = Split-Path -Parent $PSScriptRoot
 
-Write-Host "Running repository policy validation."
+Write-Output "Running repository policy validation."
 & (Join-Path $repositoryRootDirectory "scripts/validate-repo.ps1")
 
-Write-Host "Running full project build and test verification."
+Write-Output "Running full project build and test verification."
 & (Join-Path $repositoryRootDirectory "scripts/build-project.ps1")

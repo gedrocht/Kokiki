@@ -30,28 +30,28 @@ $requiredTools = @(
   }
 )
 
-Write-Host ""
-Write-Host "Kokiki prerequisite check"
-Write-Host "========================="
-Write-Host ""
+Write-Output ""
+Write-Output "Kokiki prerequisite check"
+Write-Output "========================="
+Write-Output ""
 
 foreach ($requiredTool in $requiredTools) {
   $detectedCommand = Get-Command $requiredTool.CommandName -ErrorAction SilentlyContinue
 
   if ($detectedCommand) {
-    Write-Host "[FOUND] $($requiredTool.ToolName)"
+    Write-Output "[FOUND] $($requiredTool.ToolName)"
   } else {
-    Write-Host "[MISSING] $($requiredTool.ToolName)"
-    Write-Host "          Download: $($requiredTool.DownloadUrl)"
+    Write-Output "[MISSING] $($requiredTool.ToolName)"
+    Write-Output "          Download: $($requiredTool.DownloadUrl)"
   }
 }
 
-Write-Host ""
-Write-Host "Recommended beginner workflow"
-Write-Host "-----------------------------"
-Write-Host "1. Build the project:"
-Write-Host "   powershell -ExecutionPolicy Bypass -File scripts/build-project.ps1"
-Write-Host "2. Run the application:"
-Write-Host "   powershell -ExecutionPolicy Bypass -File scripts/run-application.ps1"
-Write-Host "3. Run the tests:"
-Write-Host "   powershell -ExecutionPolicy Bypass -File scripts/test-project.ps1"
+Write-Output ""
+Write-Output "Recommended beginner workflow"
+Write-Output "-----------------------------"
+Write-Output "1. Build the project:"
+Write-Output "   powershell -ExecutionPolicy Bypass -File scripts/build-project.ps1"
+Write-Output "2. Run the application:"
+Write-Output "   powershell -ExecutionPolicy Bypass -File scripts/run-application.ps1"
+Write-Output "3. Run the tests:"
+Write-Output "   powershell -ExecutionPolicy Bypass -File scripts/test-project.ps1"
