@@ -9,7 +9,9 @@
     <exclude name="GuardLogStatement"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
+    <exclude name="AtLeastOneConstructor"/>
     <exclude name="LongVariable"/>
+    <exclude name="UnnecessaryConstructor"/>
   </rule>
   <rule ref="category/java/design.xml">
     <exclude name="LawOfDemeter"/>

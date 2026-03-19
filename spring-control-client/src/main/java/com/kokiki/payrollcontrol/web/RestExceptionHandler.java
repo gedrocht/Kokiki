@@ -18,15 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public final class RestExceptionHandler {
 
   /**
-   * Creates the REST exception handler.
-   *
-   * <p>This explicit constructor keeps the class friendly to both Spring and
-   * static-analysis rules.</p>
-   */
-  public RestExceptionHandler() {
-  }
-
-  /**
    * Handles employee-not-found failures.
    *
    * @param employeeRecordNotFoundException thrown exception
