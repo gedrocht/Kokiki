@@ -99,4 +99,30 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
       throw new PayrollProcessingException("Could not read the employee directory file.", ioException);
     }
   }
+
+  /**
+   * Converts one comma-separated line into a strongly typed employee record.
+   *
+   * @param employeeDirectoryLine one line from the classpath file
+   * @return parsed employee record
+   */
+  private EmployeeRecord convertLineIntoEmployeeRecord(final String employeeDirectoryLine) {
+    final String[] commaSeparatedValues = employeeDirectoryLine.split(",", -1);
+
+    if (commaSeparatedValues.length != EXPECTED_EMPLOYEE_DIRECTORY_COLUMN_COUNT) {
+      throw new PayrollProcessingException(
+          "Expected " + EXPECTED_EMPLOYEE_DIRECTORY_COLUMN_COUNT
+              + " columns in the employee directory but found " + commaSeparatedValues.length + ".");
+    }
+
+    return new EmployeeRecord(
+        commaSeparatedValues[0],
+        commaSeparatedValues[1],
+        commaSeparatedValues[2],
+        commaSeparatedValues[3],
+        new BigDecimal(commaSeparatedValues[4]),
+        Boolean.parseBoolean(commaSeparatedValues[5]),
+        new BigDecimal(commaSeparatedValues[6]),
+        new BigDecimal(commaSeparatedValues[7]));
+  }
 }

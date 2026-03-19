@@ -8,7 +8,6 @@
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
     <exclude name="LooseCoupling"/>
     <exclude name="GuardLogStatement"/>
-    <exclude name="LongVariable"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
