@@ -1,0 +1,1 @@
+Beginner-friendly COBOL payroll platform with a Spring Boot control client, strict GitHub quality gates, deep documentation, and a serveable wiki.

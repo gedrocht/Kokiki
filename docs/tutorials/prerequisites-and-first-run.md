@@ -17,6 +17,11 @@ to a running application.
 
 ## Fastest possible workflow
 
+Important:
+`.ps1` files are PowerShell scripts, not Python scripts.
+Run them with `powershell -ExecutionPolicy Bypass -File ...` or directly from
+PowerShell as `.\scripts\name.ps1`.
+
 ### Windows PowerShell
 
 ```powershell

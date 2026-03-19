@@ -6,11 +6,12 @@ set -euo pipefail
 # top-level scripts folder. It compiles the COBOL engine when GNU COBOL is
 # available and then runs the Maven verification pipeline for the Java module.
 repository_root_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+root_pom_path="${repository_root_directory}/pom.xml"
 compiled_cobol_executable_path="${repository_root_directory}/cobol-core/build/payroll-calculation-engine"
 
 cd "${repository_root_directory}"
 
-maven_arguments=(-B -ntp clean verify)
+maven_arguments=(-f "${root_pom_path}" -B -ntp -pl spring-control-client -am clean verify)
 
 if command -v cobc >/dev/null 2>&1; then
   printf 'GNU COBOL detected. Compiling the COBOL payroll engine first.\n'

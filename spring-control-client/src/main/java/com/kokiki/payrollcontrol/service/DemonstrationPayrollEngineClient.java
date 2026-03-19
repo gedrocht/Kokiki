@@ -21,48 +21,48 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(name = "company-payroll.execution-mode", havingValue = "demonstration", matchIfMissing = true)
 public final class DemonstrationPayrollEngineClient implements PayrollEngineClient {
 
-  private static final Logger applicationLogger = LoggerFactory.getLogger(DemonstrationPayrollEngineClient.class);
+  private static final Logger APPLICATION_LOGGER = LoggerFactory.getLogger(DemonstrationPayrollEngineClient.class);
   private static final BigDecimal OVERTIME_PAY_MULTIPLIER = new BigDecimal("1.50");
   private static final BigDecimal RETIREMENT_CONTRIBUTION_RATE = new BigDecimal("0.05");
   private static final BigDecimal PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR = new BigDecimal("0.0385");
 
   @Override
   public CobolPayrollExecutionResponse calculatePayroll(final CobolPayrollExecutionRequest payrollExecutionRequest) {
-    applicationLogger.warn(
+    APPLICATION_LOGGER.warn(
         "Using the demonstration payroll engine mirror for employee {}.",
         payrollExecutionRequest.employeeIdentifier());
 
     final BigDecimal grossRegularPayAmount =
-        payrollExecutionRequest.hourlyWageAmount().multiply(payrollExecutionRequest.regularHoursWorked());
+        scaleCurrency(payrollExecutionRequest.hourlyWageAmount().multiply(payrollExecutionRequest.regularHoursWorked()));
     final BigDecimal grossOvertimePayAmount =
-        payrollExecutionRequest.hourlyWageAmount()
+        scaleCurrency(payrollExecutionRequest.hourlyWageAmount()
             .multiply(payrollExecutionRequest.overtimeHoursWorked())
-            .multiply(OVERTIME_PAY_MULTIPLIER);
+            .multiply(OVERTIME_PAY_MULTIPLIER));
     final BigDecimal grossPayAmount =
-        grossRegularPayAmount.add(grossOvertimePayAmount).add(payrollExecutionRequest.performanceBonusAmount());
+        scaleCurrency(grossRegularPayAmount.add(grossOvertimePayAmount).add(payrollExecutionRequest.performanceBonusAmount()));
     final BigDecimal taxWithholdingAmount =
-        grossPayAmount.multiply(payrollExecutionRequest.standardTaxRatePercentage());
-    final BigDecimal retirementContributionAmount = grossPayAmount.multiply(RETIREMENT_CONTRIBUTION_RATE);
+        scaleCurrency(grossPayAmount.multiply(payrollExecutionRequest.standardTaxRatePercentage()));
+    final BigDecimal retirementContributionAmount = scaleCurrency(grossPayAmount.multiply(RETIREMENT_CONTRIBUTION_RATE));
     final BigDecimal paidLeaveAccruedHours =
-        payrollExecutionRequest.regularHoursWorked()
+        scaleHours(payrollExecutionRequest.regularHoursWorked()
             .add(payrollExecutionRequest.overtimeHoursWorked())
-            .multiply(PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR);
+            .multiply(PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR));
     final BigDecimal netPayAmount =
-        grossPayAmount.subtract(taxWithholdingAmount)
+        scaleCurrency(grossPayAmount.subtract(taxWithholdingAmount)
             .subtract(retirementContributionAmount)
-            .subtract(payrollExecutionRequest.benefitDeductionAmount());
+            .subtract(payrollExecutionRequest.benefitDeductionAmount()));
 
     return new CobolPayrollExecutionResponse(
         payrollExecutionRequest.employeeIdentifier(),
         payrollExecutionRequest.employeeFullName(),
-        scaleCurrency(grossRegularPayAmount),
-        scaleCurrency(grossOvertimePayAmount),
-        scaleCurrency(grossPayAmount),
-        scaleCurrency(taxWithholdingAmount),
-        scaleCurrency(retirementContributionAmount),
+        grossRegularPayAmount,
+        grossOvertimePayAmount,
+        grossPayAmount,
+        taxWithholdingAmount,
+        retirementContributionAmount,
         scaleCurrency(payrollExecutionRequest.benefitDeductionAmount()),
-        scaleHours(paidLeaveAccruedHours),
-        scaleCurrency(netPayAmount));
+        paidLeaveAccruedHours,
+        netPayAmount);
   }
 
   @Override

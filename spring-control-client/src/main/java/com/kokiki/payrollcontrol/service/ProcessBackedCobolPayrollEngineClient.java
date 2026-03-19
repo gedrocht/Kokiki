@@ -27,7 +27,8 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(name = "company-payroll.execution-mode", havingValue = "process")
 public final class ProcessBackedCobolPayrollEngineClient implements PayrollEngineClient {
 
-  private static final Logger applicationLogger = LoggerFactory.getLogger(ProcessBackedCobolPayrollEngineClient.class);
+  private static final Logger APPLICATION_LOGGER = LoggerFactory.getLogger(ProcessBackedCobolPayrollEngineClient.class);
+  private static final int OUTPUT_KEY_VALUE_PART_COUNT = 2;
 
   private final Path cobolExecutablePath;
 
@@ -53,7 +54,7 @@ public final class ProcessBackedCobolPayrollEngineClient implements PayrollEngin
           "The configured COBOL executable does not exist: " + cobolExecutablePath);
     }
 
-    applicationLogger.info("Launching COBOL payroll engine at {}.", cobolExecutablePath);
+    APPLICATION_LOGGER.info("Launching COBOL payroll engine at {}.", cobolExecutablePath);
 
     try {
       final Process payrollProcess = new ProcessBuilder(cobolExecutablePath.toString())
@@ -146,7 +147,7 @@ public final class ProcessBackedCobolPayrollEngineClient implements PayrollEngin
       String outputLine = processOutputReader.readLine();
       while (outputLine != null) {
         final String[] outputLineParts = outputLine.split("=", 2);
-        if (outputLineParts.length == 2) {
+        if (outputLineParts.length == OUTPUT_KEY_VALUE_PART_COUNT) {
           processOutputValues.put(outputLineParts[0].trim(), outputLineParts[1].trim());
         }
         outputLine = processOutputReader.readLine();

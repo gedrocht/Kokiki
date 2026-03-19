@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public final class EmployeePayrollApplicationService {
 
-  private static final Logger applicationLogger = LoggerFactory.getLogger(EmployeePayrollApplicationService.class);
+  private static final Logger APPLICATION_LOGGER = LoggerFactory.getLogger(EmployeePayrollApplicationService.class);
   private static final String FICTIONAL_COMPANY_NAME = "Blue Sky Office Design";
 
   private final EmployeeDirectoryRepository employeeDirectoryRepository;
@@ -61,7 +61,7 @@ public final class EmployeePayrollApplicationService {
         .orElseThrow(() -> new EmployeeRecordNotFoundException(
             "No employee record exists for identifier " + payrollCalculationRequest.employeeIdentifier() + "."));
 
-    applicationLogger.info("Calculating payroll for employee {}.", employeeRecord.employeeIdentifier());
+    APPLICATION_LOGGER.info("Calculating payroll for employee {}.", employeeRecord.employeeIdentifier());
 
     final CobolPayrollExecutionRequest payrollExecutionRequest = new CobolPayrollExecutionRequest(
         employeeRecord.employeeIdentifier(),

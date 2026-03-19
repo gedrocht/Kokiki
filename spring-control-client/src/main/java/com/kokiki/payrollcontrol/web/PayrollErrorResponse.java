@@ -16,4 +16,19 @@ public record PayrollErrorResponse(
     String errorCategory,
     String message,
     List<String> details) {
+
+  /**
+   * Creates an immutable error response snapshot.
+   *
+   * <p>The defensive copy keeps callers from changing the stored error details
+   * after the response is created.</p>
+   */
+  public PayrollErrorResponse {
+    details = List.copyOf(details);
+  }
+
+  @Override
+  public List<String> details() {
+    return List.copyOf(details);
+  }
 }
