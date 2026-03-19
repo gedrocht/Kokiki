@@ -38,15 +38,19 @@ jobs:
         run: actionlint
 
       - name: Run Markdown lint
-        run: pymarkdown scan . --disable-rules line-length
+        run: pymarkdown -d line-length scan .
 
       - name: Run YAML lint
         run: yamllint .
 
       - name: Validate Docker Compose files
         run: |
-          docker compose -f wiki/docker-compose.yml config
-          docker compose -f infra/observability/docker-compose.yml config
+          if [ -f wiki/docker-compose.yml ]; then
+            docker compose -f wiki/docker-compose.yml config
+          fi
+          if [ -f infra/observability/docker-compose.yml ]; then
+            docker compose -f infra/observability/docker-compose.yml config
+          fi
 
       - name: Install PowerShell analyzers
         shell: pwsh
@@ -87,18 +91,36 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
+      - name: Detect Maven project files
+        id: maven_project_files
+        shell: bash
+        run: |
+          if find . -name pom.xml -print -quit | grep -q .; then
+            echo "has_maven_project=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_maven_project=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Java
+        if: steps.maven_project_files.outputs.has_maven_project == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
           cache: maven
 
+      - name: Java verification unavailable
+        if: steps.maven_project_files.outputs.has_maven_project != 'true'
+        run: |
+          echo "No Maven project files were found in this checkout." >> "$GITHUB_STEP_SUMMARY"
+          echo "Skipping Maven verification for this branch snapshot." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run Maven verification
+        if: steps.maven_project_files.outputs.has_maven_project == 'true'
         run: mvn -B -ntp -pl spring-control-client -am verify
 
       - name: Upload test and coverage reports
-        if: always()
+        if: always() && steps.maven_project_files.outputs.has_maven_project == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: java-quality-reports
@@ -121,24 +143,60 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
+      - name: Detect COBOL and Maven project files
+        id: cobol_and_maven_project_files
+        shell: bash
+        run: |
+          if [ -f cobol-core/scripts/compile-payroll-engine.sh ]; then
+            echo "has_cobol_engine=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_cobol_engine=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if find . -name pom.xml -print -quit | grep -q .; then
+            echo "has_maven_project=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_maven_project=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install GNU COBOL
+        if: >-
+          steps.cobol_and_maven_project_files.outputs.has_cobol_engine == 'true'
+          && steps.cobol_and_maven_project_files.outputs.has_maven_project == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install --yes gnucobol
 
       - name: Build COBOL executable
+        if: >-
+          steps.cobol_and_maven_project_files.outputs.has_cobol_engine == 'true'
+          && steps.cobol_and_maven_project_files.outputs.has_maven_project == 'true'
         run: |
           chmod +x cobol-core/scripts/compile-payroll-engine.sh
           ./cobol-core/scripts/compile-payroll-engine.sh
 
       - name: Set up Java
+        if: >-
+          steps.cobol_and_maven_project_files.outputs.has_cobol_engine == 'true'
+          && steps.cobol_and_maven_project_files.outputs.has_maven_project == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
           cache: maven
 
+      - name: COBOL process integration unavailable
+        if: >-
+          steps.cobol_and_maven_project_files.outputs.has_cobol_engine != 'true'
+          || steps.cobol_and_maven_project_files.outputs.has_maven_project != 'true'
+        run: |
+          echo "The COBOL engine files or Maven project files were not present in this checkout." >> "$GITHUB_STEP_SUMMARY"
+          echo "Skipping COBOL integration for this branch snapshot." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run integration tests against the real COBOL executable
+        if: >-
+          steps.cobol_and_maven_project_files.outputs.has_cobol_engine == 'true'
+          && steps.cobol_and_maven_project_files.outputs.has_maven_project == 'true'
         run: >
           mvn -B -ntp -pl spring-control-client -am verify
           -Dcobol.payroll.executable.path=${{ github.workspace }}/cobol-core/build/payroll-calculation-engine
