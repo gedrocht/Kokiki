@@ -41,7 +41,7 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
 
   @Override
   public List<EmployeeRecord> findAllEmployeeRecords() {
-    return employeeRecords;
+    return List.copyOf(employeeRecords);
   }
 
   @Override
