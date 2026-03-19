@@ -1,8 +1,22 @@
 # Kokiki Payroll Platform
 
+[![Quality](https://github.com/gedrocht/Kokiki/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/gedrocht/Kokiki/actions/workflows/quality.yml)
+[![Security](https://github.com/gedrocht/Kokiki/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/gedrocht/Kokiki/actions/workflows/security.yml)
+[![Documentation](https://github.com/gedrocht/Kokiki/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/gedrocht/Kokiki/actions/workflows/documentation.yml)
+[![Scorecard](https://github.com/gedrocht/Kokiki/actions/workflows/scorecard.yml/badge.svg?branch=main)](https://github.com/gedrocht/Kokiki/actions/workflows/scorecard.yml)
+
 Kokiki is a fictional payroll modernization repository for **Blue Sky Office
 Design**, a 30-person company that wants to keep dependable COBOL payroll logic
 while operating it through a modern Java Spring Boot control client.
+
+It is designed to be beginner-friendly on the surface and strict underneath:
+simple starter scripts, very verbose documentation, and aggressive GitHub
+quality, security, and coverage gates.
+
+## GitHub Description
+
+Beginner-friendly COBOL payroll platform with a Spring Boot control client,
+strict GitHub quality gates, deep documentation, and a serveable wiki.
 
 ## What the project does
 
@@ -34,6 +48,18 @@ order:
 2. Build the project.
 3. Run the application.
 4. Run the tests.
+
+If you only want the shortest possible path:
+
+- `scripts/check-prerequisites.ps1`
+- `scripts/build-project.ps1`
+- `scripts/run-application.ps1`
+- `scripts/test-project.ps1`
+
+Important:
+`.ps1` files are PowerShell scripts, not Python scripts.
+Use `powershell -ExecutionPolicy Bypass -File scripts/name.ps1` or run them
+directly from PowerShell as `.\scripts\name.ps1`.
 
 ### Step 1: Check prerequisites
 
@@ -142,6 +168,7 @@ Graph** setting to be enabled in GitHub.
 - Narrative docs site: `docs/` via MkDocs Material
 - Generated source reference: Doxygen output
 - Separate serveable wiki: Wiki.js in `wiki/`
+- GitHub-ready description text: `.github/repository-description.txt`
 - Library references with official links:
   [docs/reference/external-libraries.md](docs/reference/external-libraries.md)
 
