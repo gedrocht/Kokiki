@@ -70,7 +70,24 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
 
       final List<EmployeeRecord> loadedEmployeeRecords = employeeDirectoryLines.stream()
           .skip(1)
-          .map(this::convertLineIntoEmployeeRecord)
+          .map(employeeDirectoryLine -> {
+            final String[] commaSeparatedValues = employeeDirectoryLine.split(",", -1);
+
+            if (commaSeparatedValues.length != 8) {
+              throw new PayrollProcessingException(
+                  "Expected 8 columns in the employee directory but found " + commaSeparatedValues.length + ".");
+            }
+
+            return new EmployeeRecord(
+                commaSeparatedValues[0],
+                commaSeparatedValues[1],
+                commaSeparatedValues[2],
+                commaSeparatedValues[3],
+                new BigDecimal(commaSeparatedValues[4]),
+                Boolean.parseBoolean(commaSeparatedValues[5]),
+                new BigDecimal(commaSeparatedValues[6]),
+                new BigDecimal(commaSeparatedValues[7]));
+          })
           .toList();
 
       applicationLogger.info("Loaded {} employee records from the seed directory.", loadedEmployeeRecords.size());
@@ -78,30 +95,5 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
     } catch (final IOException ioException) {
       throw new PayrollProcessingException("Could not read the employee directory file.", ioException);
     }
-  }
-
-  /**
-   * Converts one comma-separated line into a strongly typed employee record.
-   *
-   * @param employeeDirectoryLine one line from the classpath file
-   * @return parsed employee record
-   */
-  private EmployeeRecord convertLineIntoEmployeeRecord(final String employeeDirectoryLine) {
-    final String[] commaSeparatedValues = employeeDirectoryLine.split(",", -1);
-
-    if (commaSeparatedValues.length != 8) {
-      throw new PayrollProcessingException(
-          "Expected 8 columns in the employee directory but found " + commaSeparatedValues.length + ".");
-    }
-
-    return new EmployeeRecord(
-        commaSeparatedValues[0],
-        commaSeparatedValues[1],
-        commaSeparatedValues[2],
-        commaSeparatedValues[3],
-        new BigDecimal(commaSeparatedValues[4]),
-        Boolean.parseBoolean(commaSeparatedValues[5]),
-        new BigDecimal(commaSeparatedValues[6]),
-        new BigDecimal(commaSeparatedValues[7]));
   }
 }
