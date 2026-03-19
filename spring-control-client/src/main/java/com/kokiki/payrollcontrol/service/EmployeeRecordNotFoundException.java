@@ -5,6 +5,8 @@ package com.kokiki.payrollcontrol.service;
  */
 public final class EmployeeRecordNotFoundException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   /**
    * Creates an exception with a message.
    *

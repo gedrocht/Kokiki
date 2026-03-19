@@ -21,14 +21,14 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(name = "company-payroll.execution-mode", havingValue = "demonstration", matchIfMissing = true)
 public final class DemonstrationPayrollEngineClient implements PayrollEngineClient {
 
-  private static final Logger applicationLogger = LoggerFactory.getLogger(DemonstrationPayrollEngineClient.class);
+  private static final Logger APPLICATION_LOGGER = LoggerFactory.getLogger(DemonstrationPayrollEngineClient.class);
   private static final BigDecimal OVERTIME_PAY_MULTIPLIER = new BigDecimal("1.50");
   private static final BigDecimal RETIREMENT_CONTRIBUTION_RATE = new BigDecimal("0.05");
   private static final BigDecimal PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR = new BigDecimal("0.0385");
 
   @Override
   public CobolPayrollExecutionResponse calculatePayroll(final CobolPayrollExecutionRequest payrollExecutionRequest) {
-    applicationLogger.warn(
+    APPLICATION_LOGGER.warn(
         "Using the demonstration payroll engine mirror for employee {}.",
         payrollExecutionRequest.employeeIdentifier());
 
