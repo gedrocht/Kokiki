@@ -22,8 +22,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public final class CommaSeparatedValueEmployeeDirectoryRepository implements EmployeeDirectoryRepository {
 
-  private static final Logger applicationLogger =
+  private static final Logger APPLICATION_LOGGER =
       LoggerFactory.getLogger(CommaSeparatedValueEmployeeDirectoryRepository.class);
+  private static final int MINIMUM_EMPLOYEE_DIRECTORY_LINE_COUNT = 2;
+  private static final int EXPECTED_EMPLOYEE_DIRECTORY_COLUMN_COUNT = 8;
 
   private final List<EmployeeRecord> employeeRecords;
 
@@ -64,7 +66,7 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
           .lines()
           .toList();
 
-      if (employeeDirectoryLines.size() < 2) {
+      if (employeeDirectoryLines.size() < MINIMUM_EMPLOYEE_DIRECTORY_LINE_COUNT) {
         throw new PayrollProcessingException("The employee directory file did not contain employee data.");
       }
 
@@ -73,7 +75,7 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
           .map(this::convertLineIntoEmployeeRecord)
           .toList();
 
-      applicationLogger.info("Loaded {} employee records from the seed directory.", loadedEmployeeRecords.size());
+      APPLICATION_LOGGER.info("Loaded {} employee records from the seed directory.", loadedEmployeeRecords.size());
       return List.copyOf(loadedEmployeeRecords);
     } catch (final IOException ioException) {
       throw new PayrollProcessingException("Could not read the employee directory file.", ioException);
@@ -89,9 +91,10 @@ public final class CommaSeparatedValueEmployeeDirectoryRepository implements Emp
   private EmployeeRecord convertLineIntoEmployeeRecord(final String employeeDirectoryLine) {
     final String[] commaSeparatedValues = employeeDirectoryLine.split(",", -1);
 
-    if (commaSeparatedValues.length != 8) {
+    if (commaSeparatedValues.length != EXPECTED_EMPLOYEE_DIRECTORY_COLUMN_COUNT) {
       throw new PayrollProcessingException(
-          "Expected 8 columns in the employee directory but found " + commaSeparatedValues.length + ".");
+          "Expected " + EXPECTED_EMPLOYEE_DIRECTORY_COLUMN_COUNT
+              + " columns in the employee directory but found " + commaSeparatedValues.length + ".");
     }
 
     return new EmployeeRecord(
