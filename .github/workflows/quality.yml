@@ -62,9 +62,16 @@ jobs:
       - name: Analyze PowerShell
         shell: pwsh
         run: |
-          $scripts = Get-ChildItem -Recurse -File -Include *.ps1,*.psm1,*.psd1
-          if ($scripts) {
-            Invoke-ScriptAnalyzer -Path $scripts.FullName -Recurse -Severity Error,Warning
+          $scriptPaths = Get-ChildItem -Recurse -File -Include *.ps1,*.psm1,*.psd1 |
+            Select-Object -ExpandProperty FullName
+          if ($scriptPaths) {
+            $analysisFindings = foreach ($scriptPath in $scriptPaths) {
+              Invoke-ScriptAnalyzer -Path $scriptPath -Severity Error,Warning
+            }
+            if ($analysisFindings) {
+              $analysisFindings | Format-Table -AutoSize
+              throw "PSScriptAnalyzer reported issues."
+            }
           } else {
             Write-Host "No PowerShell files found."
           }
