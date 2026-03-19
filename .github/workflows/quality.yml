@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  quality:
+  repository-standards:
     name: Lint, policy, and static analysis
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -22,28 +22,33 @@ jobs:
           egress-policy: audit
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - name: Install Python tooling
+      - name: Install repository linting tools
         run: |
           python -m pip install --upgrade pip
-          pip install actionlint-py markdownlint-cli2 yamllint
+          pip install actionlint-py yamllint pymarkdownlnt
 
       - name: Run actionlint
         run: actionlint
 
       - name: Run Markdown lint
-        run: markdownlint-cli2 "**/*.md" "#node_modules"
+        run: pymarkdown scan . --disable-rules line-length
 
       - name: Run YAML lint
         run: yamllint .
 
-      - name: Install PSScriptAnalyzer
+      - name: Validate Docker Compose files
+        run: |
+          docker compose -f wiki/docker-compose.yml config
+          docker compose -f infra/observability/docker-compose.yml config
+
+      - name: Install PowerShell analyzers
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
@@ -67,3 +72,73 @@ jobs:
       - name: Run repository tests
         shell: pwsh
         run: Invoke-Pester -Path ./tests -CI
+
+  java-verification:
+    name: Java verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run Maven verification
+        run: mvn -B -ntp -pl spring-control-client -am verify
+
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-quality-reports
+          path: |
+            spring-control-client/target/site
+            spring-control-client/target/surefire-reports
+            spring-control-client/target/failsafe-reports
+
+  cobol-process-integration:
+    name: COBOL process integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install GNU COBOL
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes gnucobol
+
+      - name: Build COBOL executable
+        run: |
+          chmod +x cobol-core/scripts/compile-payroll-engine.sh
+          ./cobol-core/scripts/compile-payroll-engine.sh
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run integration tests against the real COBOL executable
+        run: >
+          mvn -B -ntp -pl spring-control-client -am verify
+          -Dcobol.payroll.executable.path=${{ github.workspace }}/cobol-core/build/payroll-calculation-engine

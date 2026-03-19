@@ -1,16 +1,27 @@
 # Contributing
 
-## Pull requests
+This repository is intentionally strict because it is designed as a teaching
+artifact and as a demonstration of a high-assurance GitHub setup.
 
-- Keep pull requests small and reviewable.
-- Make sure all GitHub checks pass before requesting review.
-- Update documentation when behavior or policy changes.
+## Before you open a pull request
 
-## Quality bar
+1. Read the beginner documentation and repository tour.
+2. Keep naming descriptive and avoid abbreviations in new variables.
+3. Add explanatory comments where a beginner would struggle without them.
+4. Update tutorials and reference documentation when behavior changes.
+5. Keep tests, coverage, and quality checks passing.
 
-Every change is expected to maintain:
+## Expected quality bar
 
-- passing tests
-- passing lint and static analysis
-- no new high or critical security findings
-- code review approval
+- New code should include unit tests.
+- New HTTP behavior should include web-layer tests.
+- Cross-layer rules should stay covered by architecture tests.
+- Coverage must stay above the configured JaCoCo thresholds.
+- Pull requests should not introduce new high-severity vulnerabilities.
+
+## Review expectations
+
+- At least one CODEOWNERS review is expected.
+- Security-sensitive changes should explain their threat model impact.
+- Documentation changes are welcome and encouraged, especially if they make the
+  code easier for beginners to understand.

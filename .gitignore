@@ -10,3 +10,15 @@ Thumbs.db
 # PowerShell / tooling
 .coverage/
 TestResults/
+
+# Build outputs
+build/
+target/
+site/
+
+# Python docs tooling
+.venv/
+__pycache__/
+
+# Java / IDE
+*.class

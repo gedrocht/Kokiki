@@ -11,15 +11,26 @@ $requiredFiles = @(
   ".gitattributes",
   ".markdownlint-cli2.jsonc",
   ".github/dependabot.yml",
+  ".github/ISSUE_TEMPLATE/bug-report.yml",
+  ".github/ISSUE_TEMPLATE/improvement-request.yml",
   ".github/pull_request_template.md",
+  ".github/workflows/documentation.yml",
   ".github/workflows/quality.yml",
   ".github/workflows/security.yml",
   ".github/workflows/scorecard.yml",
   ".yamllint.yml",
+  "Doxyfile",
   "CODEOWNERS",
   "CONTRIBUTING.md",
+  "LICENSE",
+  "NOTICE",
   "README.md",
-  "SECURITY.md"
+  "SECURITY.md",
+  "cobol-core/src/main/cobol/payroll_calculation_engine.cbl",
+  "spring-control-client/pom.xml",
+  "spring-control-client/src/main/resources/fictional-company-employee-directory.csv",
+  "wiki/docker-compose.yml",
+  "mkdocs.yml"
 )
 
 $missing = foreach ($relativePath in $requiredFiles) {
@@ -55,14 +66,22 @@ foreach ($workflow in $workflowFiles) {
 $contentChecks = @{
   ".github/workflows/quality.yml" = @(
     "actionlint",
-    "markdownlint",
+    "pymarkdown",
     "yamllint",
-    "PSScriptAnalyzer"
+    "PSScriptAnalyzer",
+    "mvn -B -ntp -pl spring-control-client -am verify",
+    "gnucobol"
   )
   ".github/workflows/security.yml" = @(
     "gitleaks",
     "dependency-review-action",
-    "trivy"
+    "trivy",
+    "github/codeql-action/init"
+  )
+  ".github/workflows/documentation.yml" = @(
+    "mkdocs build",
+    "doxygen",
+    "upload-pages-artifact"
   )
   ".github/workflows/scorecard.yml" = @(
     "scorecard-action"
@@ -77,6 +96,17 @@ foreach ($relativePath in $contentChecks.Keys) {
       throw "Expected '$needle' in '$relativePath'."
     }
   }
+}
+
+$employeeDirectoryPath = Join-Path $repoRoot "spring-control-client/src/main/resources/fictional-company-employee-directory.csv"
+$employeeDirectoryLineCount = (Get-Content -LiteralPath $employeeDirectoryPath | Measure-Object -Line).Lines
+if ($employeeDirectoryLineCount -ne 31) {
+  throw "Expected 31 lines in the employee directory file, including the header, but found $employeeDirectoryLineCount."
+}
+
+$readmeContent = Get-Content -LiteralPath (Join-Path $repoRoot "README.md") -Raw
+if ($readmeContent -notmatch "COBOL" -or $readmeContent -notmatch "Spring Boot" -or $readmeContent -notmatch "Wiki\.js") {
+  throw "README.md must describe the COBOL engine, Spring Boot client, and Wiki.js documentation layer."
 }
 
 Write-Host "Repository policy validation passed."

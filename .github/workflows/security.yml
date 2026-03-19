@@ -19,16 +19,56 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
+      - name: Detect dependency review support
+        id: dependency_review_support
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}",
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              },
+          )
+          with urllib.request.urlopen(request) as response:
+              repository_payload = json.load(response)
+
+          dependency_graph_status = repository_payload.get("security_and_analysis", {}) \
+              .get("dependency_graph", {}) \
+              .get("status")
+
+          is_dependency_graph_enabled = dependency_graph_status == "enabled"
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output_file:
+              output_file.write(
+                  f"dependency_graph_enabled={'true' if is_dependency_graph_enabled else 'false'}\n"
+              )
+          PY
+
       - name: Harden runner
+        if: steps.dependency_review_support.outputs.dependency_graph_enabled == 'true'
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
 
       - name: Dependency review
-        uses: actions/dependency-review-action@v4
+        if: steps.dependency_review_support.outputs.dependency_graph_enabled == 'true'
+        uses: actions/dependency-review-action@v4.9.0
         with:
           fail-on-severity: high
           deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
+
+      - name: Dependency review unavailable
+        if: steps.dependency_review_support.outputs.dependency_graph_enabled != 'true'
+        run: |
+          echo "Dependency Graph is disabled for this repository." >> "$GITHUB_STEP_SUMMARY"
+          echo "Enable it in Settings > Security > Advanced Security to restore GitHub-native dependency review." >> "$GITHUB_STEP_SUMMARY"
 
   secret-scan:
     name: Secret scan
@@ -40,7 +80,7 @@ jobs:
           egress-policy: audit
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -59,10 +99,10 @@ jobs:
           egress-policy: audit
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run Trivy
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           scan-type: fs
           ignore-unfixed: true
@@ -71,7 +111,37 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Upload Trivy results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-results.sarif
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: java
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
