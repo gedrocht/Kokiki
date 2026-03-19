@@ -36,7 +36,7 @@ function Test-MappedNetworkDrive {
   return ($null -ne $powerShellDrive -and -not [string]::IsNullOrWhiteSpace($powerShellDrive.DisplayRoot))
 }
 
-function New-LocalMavenWorkspaceCopy {
+function Copy-RepositoryToLocalMavenWorkspace {
   param(
     [Parameter(Mandatory = $true)]
     [string]$SourceRepositoryRootDirectory
@@ -70,7 +70,7 @@ if ($null -ne $javaMajorVersion -and $javaMajorVersion -gt 21) {
 }
 
 $mavenExecutionDirectory = if (Test-MappedNetworkDrive -PathToCheck $repositoryRootDirectory) {
-  New-LocalMavenWorkspaceCopy -SourceRepositoryRootDirectory $repositoryRootDirectory
+  Copy-RepositoryToLocalMavenWorkspace -SourceRepositoryRootDirectory $repositoryRootDirectory
 } else {
   $repositoryRootDirectory
 }
