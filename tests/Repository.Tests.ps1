@@ -1,6 +1,4 @@
-BeforeAll {
-  $repoRoot = Split-Path -Parent $PSScriptRoot
-}
+$script:repoRoot = Split-Path -Parent $PSScriptRoot
 
 Describe "Repository baseline" {
   It "includes the required governance files" {
