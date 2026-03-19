@@ -7,6 +7,7 @@ import com.kokiki.payrollcontrol.model.CobolPayrollExecutionRequest;
 import com.kokiki.payrollcontrol.model.CobolPayrollExecutionResponse;
 import com.kokiki.payrollcontrol.model.EmployeeRecord;
 import com.kokiki.payrollcontrol.model.PayrollCalculationRequest;
+import com.kokiki.payrollcontrol.model.SystemStatusResponse;
 import com.kokiki.payrollcontrol.repository.EmployeeDirectoryRepository;
 import java.math.BigDecimal;
 import java.util.List;
@@ -50,6 +51,19 @@ class EmployeePayrollApplicationServiceTest {
             new BigDecimal("150.00"))))
         .isInstanceOf(EmployeeRecordNotFoundException.class)
         .hasMessageContaining("EMP-9999");
+  }
+
+  @Test
+  void shouldReturnSystemStatusUsingTheDirectorySizeAndEngineMode() {
+    final EmployeePayrollApplicationService employeePayrollApplicationService = new EmployeePayrollApplicationService(
+        singleEmployeeDirectoryRepository(),
+        new SuccessfulStubPayrollEngineClient());
+
+    final SystemStatusResponse systemStatusResponse = employeePayrollApplicationService.systemStatus();
+
+    assertThat(systemStatusResponse.companyName()).isEqualTo("Blue Sky Office Design");
+    assertThat(systemStatusResponse.employeeCount()).isEqualTo(1);
+    assertThat(systemStatusResponse.calculationEngineMode()).isEqualTo("stubbed-process");
   }
 
   private EmployeeDirectoryRepository singleEmployeeDirectoryRepository() {
