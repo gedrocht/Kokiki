@@ -4,6 +4,15 @@ param()
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+function Get-JavaMajorVersion {
+  $javaVersionOutputLine = cmd /c "java -version 2>&1" | Select-Object -First 1
+  if ($javaVersionOutputLine -match '"(?<major>\d+)(\.\d+)?') {
+    return [int]$Matches.major
+  }
+
+  return $null
+}
+
 # This script is intentionally beginner-focused. It checks for the tools that
 # the repository needs and prints the exact next steps that a new contributor
 # should take.
@@ -14,7 +23,7 @@ $requiredTools = @(
     DownloadUrl = "https://git-scm.com/downloads"
   },
   @{
-    ToolName = "Java 21 or newer"
+    ToolName = "Java 21"
     CommandName = "java"
     DownloadUrl = "https://adoptium.net/"
   },
@@ -40,6 +49,13 @@ foreach ($requiredTool in $requiredTools) {
 
   if ($detectedCommand) {
     Write-Output "[FOUND] $($requiredTool.ToolName)"
+
+    if ($requiredTool.CommandName -eq "java") {
+      $javaMajorVersion = Get-JavaMajorVersion
+      if ($null -ne $javaMajorVersion -and $javaMajorVersion -ne 21) {
+        Write-Output "          Note: Java $javaMajorVersion is installed. The full local build and test path currently requires Java 21."
+      }
+    }
   } else {
     Write-Output "[MISSING] $($requiredTool.ToolName)"
     Write-Output "          Download: $($requiredTool.DownloadUrl)"

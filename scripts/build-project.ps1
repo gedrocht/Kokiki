@@ -65,8 +65,12 @@ if (-not $mavenCommand) {
 }
 
 $javaMajorVersion = Get-JavaMajorVersion
-if ($null -ne $javaMajorVersion -and $javaMajorVersion -gt 21) {
-  Write-Warning "Java $javaMajorVersion was detected. Local static-analysis tools in this repository are validated most reliably on Java 21, which is also what GitHub Actions uses."
+if ($null -eq $javaMajorVersion) {
+  throw "Java is required to build this repository. Install Java 21 and try again."
+}
+
+if ($javaMajorVersion -ne 21) {
+  throw "Java $javaMajorVersion was detected. The full local build currently requires Java 21 because PMD and ArchUnit in this repository do not yet support newer class file versions reliably. Install Temurin 21, set JAVA_HOME to that JDK, reopen your shell, and try again."
 }
 
 $mavenExecutionDirectory = if (Test-MappedNetworkDrive -PathToCheck $repositoryRootDirectory) {
