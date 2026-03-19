@@ -26,6 +26,15 @@ public final class DemonstrationPayrollEngineClient implements PayrollEngineClie
   private static final BigDecimal RETIREMENT_CONTRIBUTION_RATE = new BigDecimal("0.05");
   private static final BigDecimal PAID_LEAVE_ACCRUAL_PER_WORKED_HOUR = new BigDecimal("0.0385");
 
+  /**
+   * Creates the demonstration payroll engine client.
+   *
+   * <p>This explicit constructor keeps the class friendly to both Spring and
+   * static-analysis rules.</p>
+   */
+  public DemonstrationPayrollEngineClient() {
+  }
+
   @Override
   public CobolPayrollExecutionResponse calculatePayroll(final CobolPayrollExecutionRequest payrollExecutionRequest) {
     APPLICATION_LOGGER.warn(
