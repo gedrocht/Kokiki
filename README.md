@@ -35,6 +35,11 @@ order:
 3. Run the application.
 4. Run the tests.
 
+Important:
+`.ps1` files are PowerShell scripts, not Python scripts.
+Use `powershell -ExecutionPolicy Bypass -File scripts/name.ps1` or run them
+directly from PowerShell as `.\scripts\name.ps1`.
+
 ### Step 1: Check prerequisites
 
 On Windows PowerShell:

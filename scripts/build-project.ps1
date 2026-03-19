@@ -31,7 +31,7 @@ function Test-MappedNetworkDrive {
     return $false
   }
 
-  $driveName = $driveQualifier.TrimEnd("\").TrimEnd(":")
+  $driveName = $driveQualifier.TrimEnd('\').TrimEnd(':')
   $powerShellDrive = Get-PSDrive -Name $driveName -ErrorAction SilentlyContinue
   return ($null -ne $powerShellDrive -and -not [string]::IsNullOrWhiteSpace($powerShellDrive.DisplayRoot))
 }
