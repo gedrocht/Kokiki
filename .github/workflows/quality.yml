@@ -103,7 +103,7 @@ jobs:
 
       - name: Set up Java
         if: steps.maven_project_files.outputs.has_maven_project == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
@@ -179,7 +179,7 @@ jobs:
         if: >-
           steps.cobol_and_maven_project_files.outputs.has_cobol_engine == 'true'
           && steps.cobol_and_maven_project_files.outputs.has_maven_project == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"

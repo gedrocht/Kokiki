@@ -140,7 +140,7 @@ jobs:
 
       - name: Set up Java
         if: steps.java_project_files.outputs.has_java_project == 'true'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
