@@ -14,11 +14,58 @@ Set-StrictMode -Version Latest
 $repositoryRootDirectory = Split-Path -Parent $PSScriptRoot
 $mavenCommand = Get-Command mvn -ErrorAction SilentlyContinue
 
+function Test-MappedNetworkDrive {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$PathToCheck
+  )
+
+  $driveQualifier = Split-Path -Qualifier $PathToCheck
+  if (-not $driveQualifier) {
+    return $false
+  }
+
+  $driveName = $driveQualifier.TrimEnd("\").TrimEnd(":")
+  $powerShellDrive = Get-PSDrive -Name $driveName -ErrorAction SilentlyContinue
+  return ($null -ne $powerShellDrive -and -not [string]::IsNullOrWhiteSpace($powerShellDrive.DisplayRoot))
+}
+
+function New-LocalMavenWorkspaceCopy {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$SourceRepositoryRootDirectory
+  )
+
+  $localWorkspaceDirectory = Join-Path $env:TEMP "kokiki-local-maven-workspace"
+
+  if (Test-Path -LiteralPath $localWorkspaceDirectory) {
+    Remove-Item -LiteralPath $localWorkspaceDirectory -Recurse -Force
+  }
+
+  New-Item -ItemType Directory -Path $localWorkspaceDirectory -Force | Out-Null
+
+  Get-ChildItem -LiteralPath $SourceRepositoryRootDirectory -Force | Where-Object {
+    $_.Name -notin @(".git", "target", "build")
+  } | ForEach-Object {
+    Copy-Item -LiteralPath $_.FullName -Destination $localWorkspaceDirectory -Recurse -Force
+  }
+
+  Write-Warning "The repository is on a mapped network drive, so Spring Boot will run from a temporary local workspace copy at $localWorkspaceDirectory."
+  return $localWorkspaceDirectory
+}
+
 if (-not $mavenCommand) {
   throw "Apache Maven is required to run the application. Install Maven and try again."
 }
 
-Push-Location $repositoryRootDirectory
+$mavenExecutionDirectory = if (Test-MappedNetworkDrive -PathToCheck $repositoryRootDirectory) {
+  New-LocalMavenWorkspaceCopy -SourceRepositoryRootDirectory $repositoryRootDirectory
+} else {
+  $repositoryRootDirectory
+}
+$rootPomPath = Join-Path $mavenExecutionDirectory "pom.xml"
+
+Push-Location $mavenExecutionDirectory
 try {
   if ($UseCobolProcess) {
     $cobolCompilerCommand = Get-Command cobc -ErrorAction SilentlyContinue
@@ -28,16 +75,25 @@ try {
     }
 
     Write-Output "Compiling the COBOL payroll engine."
-    & (Join-Path $repositoryRootDirectory "cobol-core/scripts/compile-payroll-engine.ps1")
+    & (Join-Path $mavenExecutionDirectory "cobol-core/scripts/compile-payroll-engine.ps1")
+    if ($LASTEXITCODE -ne 0) {
+      throw "GNU COBOL compilation failed."
+    }
 
-    $compiledCobolExecutablePath = Join-Path $repositoryRootDirectory "cobol-core/build/payroll-calculation-engine.exe"
+    $compiledCobolExecutablePath = Join-Path $mavenExecutionDirectory "cobol-core/build/payroll-calculation-engine.exe"
 
     Write-Output "Starting Spring Boot with the real COBOL process integration."
-    & mvn -pl spring-control-client spring-boot:run `
+    & mvn "-f" $rootPomPath "-pl" "spring-control-client" "spring-boot:run" `
       "-Dspring-boot.run.arguments=--company-payroll.execution-mode=process,--company-payroll.cobol-executable-path=$compiledCobolExecutablePath"
+    if ($LASTEXITCODE -ne 0) {
+      throw "Spring Boot failed to start."
+    }
   } else {
     Write-Output "Starting Spring Boot in demonstration mode."
-    & mvn -pl spring-control-client spring-boot:run
+    & mvn "-f" $rootPomPath "-pl" "spring-control-client" "spring-boot:run"
+    if ($LASTEXITCODE -ne 0) {
+      throw "Spring Boot failed to start."
+    }
   }
 } finally {
   Pop-Location
