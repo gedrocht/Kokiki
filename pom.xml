@@ -34,7 +34,7 @@
     <jacoco.minimum.line.coverage>0.90</jacoco.minimum.line.coverage>
     <jacoco.minimum.branch.coverage>0.75</jacoco.minimum.branch.coverage>
     <jacoco.maven.plugin.version>0.8.14</jacoco.maven.plugin.version>
-    <jackson.version>2.18.6</jackson.version>
+    <jackson.version>2.21.2</jackson.version>
     <logback.version>1.5.25</logback.version>
     <pmd.version>7.6.0</pmd.version>
     <maven.checkstyle.plugin.version>3.5.0</maven.checkstyle.plugin.version>
