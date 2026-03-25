@@ -62,7 +62,7 @@ jobs:
           cp -r build/doxygen/html/* site/generated-source-reference/
 
       - name: Upload documentation artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
