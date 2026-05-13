@@ -59,7 +59,7 @@ jobs:
 
       - name: Dependency review
         if: steps.dependency_review_support.outputs.dependency_graph_enabled == 'true'
-        uses: actions/dependency-review-action@v4.9.0
+        uses: actions/dependency-review-action@v5.0.0
         with:
           fail-on-severity: high
           deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
